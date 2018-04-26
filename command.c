@@ -81,7 +81,7 @@ STATUS command_interpret_input(Command* cmd, char* input) {
     strcpy(cmd->ob, "");
 	strcpy(cmd->vrb,"");
 
-    if (strncmp("E", input, 1) == 0 || strncmp("e", input, 1) == 0 || strncmp("exit", input, 4) == 0|| strncmp("Exit", input, 4) == 0) {
+    if (!strcmp(input, "E") || !strcmp(input, "e") || !strcmp(input, "exit")|| !strcmp(input, "Exit")) {
         cmd->command = EXIT;
 		strcpy(cmd->vrb,"exit");
 

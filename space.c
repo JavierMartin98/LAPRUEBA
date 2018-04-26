@@ -26,11 +26,14 @@ struct _Space {
 	Id south;
 	Id east;
 	Id west;
+	Id up;
+	Id down;
 	Set* objects;
 	char ilus1[WORD_SIZE];
 	char ilus2[WORD_SIZE];
 	char ilus3[WORD_SIZE];
 	char description[WORD_SIZE];
+	BOOL light;
 };
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
@@ -61,8 +64,12 @@ Space* space_create(Id id) {
 	newSpace->south = NO_ID;
 	newSpace->east = NO_ID;
 	newSpace->west = NO_ID;
+	newSpace->up = NO_ID;
+	newSpace->down = NO_ID;
 
 	newSpace->objects = set_create();
+
+	newSpace->light = TRUE; /*Al inicializarlo lo ponemos a espacio iluminado*/	
 
 	return newSpace;
 }
@@ -147,6 +154,30 @@ STATUS space_set_west_link(Space* space, Id idlink) {
 	}
 	/*^^^Control de errores arriba y asignación debajo^^^*/
 	space->west = idlink;
+	return OK;
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------*/
+/*Función de asignación de la posición up*/
+
+STATUS space_set_up_link(Space* space, Id idlink) {
+	if (!space || idlink == NO_ID) {
+		return ERROR;
+	}
+	/*^^^Control de errores arriba y asignación debajo^^^*/
+	space->up = idlink;
+	return OK;
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------*/
+/*Función de asignación de la posición down*/
+
+STATUS space_set_down_link(Space* space, Id idlink) {
+	if (!space || idlink == NO_ID) {
+		return ERROR;
+	}
+	/*^^^Control de errores arriba y asignación debajo^^^*/
+	space->down = idlink;
 	return OK;
 }
 
@@ -279,6 +310,27 @@ Id space_get_west_link(Space* space) {
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
+/*Función de obtención de la posición up de un espacio*/
+
+Id space_get_up_link(Space* space) {
+	if (!space) {
+		return NO_ID;
+	}
+	/*^^^Control de errores arriba y se devuelve el espacio up (debajo)^^^*/
+	return space->up;
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------*/
+/*Función de obtención de la posición oeste de un espacio*/
+
+Id space_get_down_link(Space* space) {
+	if (!space) {
+		return NO_ID;
+	}
+	/*^^^Control de errores arriba y se devuelve el espacio down (debajo)^^^*/
+	return space->down;
+}
+/*-----------------------------------------------------------------------------------------------------------------------*/
 /*Función de obtención de la ilus3acion superior*/
 
 const char * space_get_ilus1(Space* space) {
@@ -376,6 +428,30 @@ BOOL space_find_id(Space *space, Id IdObject){
 		return FALSE;
 
 }
+
+/*-----------------------------------------------------------------------------------------------------------------------*/
+STATUS space_set_lightON(Space * space){
+	if(!space) return ERROR;
+
+	space->light=TRUE;
+	return OK;
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------*/
+STATUS space_set_lightOFF(Space * space){
+	if(!space) return ERROR;
+
+	space->light=FALSE;
+	return OK;
+}
+/*-----------------------------------------------------------------------------------------------------------------------*/
+BOOL space_get_light(Space * space){
+	if(!space) return FALSE;
+
+	if(space->light==TRUE){
+		return TRUE;
+	}else return FALSE;
+}
 /*-----------------------------------------------------------------------------------------------------------------------*/
 /*Función que imprime el estado de un espacio*/
 
@@ -425,6 +501,24 @@ STATUS space_print(Space* space) {
 		fprintf(stdout, "---> No west link.\n");
 	}
 
+	/*Se busca un link en up y si existe se muestra por pantalla*/
+
+	idaux = space_get_up_link(space);
+	if (NO_ID != idaux) {
+		fprintf(stdout, "---> Up link: %ld.\n", idaux);
+	} else {
+		fprintf(stdout, "---> No up link.\n");
+	}
+
+	/*Se busca un link en down y si existe se muestra por pantalla*/
+
+	idaux = space_get_down_link(space);
+	if (NO_ID != idaux) {
+		fprintf(stdout, "---> Down link: %ld.\n", idaux);
+	} else {
+		fprintf(stdout, "---> No down link.\n");
+	}
+
 	/*Se busca un objeto en la posición actual y si existe se muestra por pantalla*/
 
 	if (space_get_object(space)) {
@@ -432,6 +526,13 @@ STATUS space_print(Space* space) {
 	} else {
 		fprintf(stdout, "---> No object in the space.\n");
 	}
+
+	if(space_get_light(space)==TRUE){
+		fprintf(stdout, "---> Illuminated space\n");
+	}else {
+		fprintf(stdout, "---> Dark space\n");
+	}
+
 
 	return OK;
 }

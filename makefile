@@ -1,181 +1,134 @@
-CC = gcc
-OBJ = o
-OBJECTS = $(OBJ)/space.o $(OBJ)/command.o $(OBJ)/game.o $(OBJ)/game_loop.o $(OBJ)/graphic_engine.o $(OBJ)/screen.o $(OBJ)/game_reader.o $(OBJ)/player.o $(OBJ)/object.o $(OBJ)/die.o $(OBJ)/set.o $(OBJ)/inventory.o $(OBJ)/link.o
-SRC = src
-INC = include
-TEST = test
-CFLAGS = -g -Wall -ansi -pedantic -c
-TestInv = $(OBJ)/inv_test.o $(OBJ)/inventory.o $(OBJ)/set.o
-TestLink = $(OBJ)/link_test.o $(OBJ)/link.o
-TestSpace = $(OBJ)/space_test.o $(OBJ)/space.o $(OBJ)/set.o
-TestDie = $(OBJ)/die_test.o $(OBJ)/die.o
-TestSet = $(OBJ)/set_test.o $(OBJ)/set.o
+CC = gcc -ansi -pedantic -g
+CFLAGS = -Wall
+EXE = game_loop set_test die_test space_test link_test inv_test
 
-jail_game: $(OBJECTS)
-	$(CC) -o jail_game $(OBJECTS)
+all : $(EXE)
 
-TestSet: $(TestSet)
-	$(CC) -o TestSet $(TestSet)
-	./TestSet
+.PHONY : clean
+clean :
+	rm -f *.o core $(EXE)
+	rm -f *.log
 
-TestDie: $(TestDie)
-	$(CC) -o TestDie $(TestDie)
-	./TestDie
+$(EXE) : % : %.o command.o game.o graphic_engine.o screen.o space.o game_reader.o player.o object.o set.o die.o inventory.o link.o
+	@echo "#---------------------------"
+	@echo "# Generando $@ "
+	@echo "# Depende de $^"
+	@echo "# Ha cambiado $<"
+	$(CC) $(CFLAGS) -o $@ $@.o command.o game.o graphic_engine.o screen.o space.o game_reader.o player.o object.o set.o die.o inventory.o link.o
 
-TestSpace: $(TestSpace)
-	$(CC) -o TestSpace $(TestSpace)
-	./TestSpace
-
-TestLink: $(TestLink)
-	$(CC) -o TestLink $(TestLink)
-	./TestLink
-
-TestInv: $(TestInv)
-	$(CC) -o TestInv $(TestInv)
-	./TestInv
-
-
-$(OBJ)/command.o : $(SRC)/command.c $(INC)/command.h $(INC)/types.h
+ command.o : command.c command.h
 	@echo "#---------------------------"
 	@echo "# Generando $@"
 	@echo "# Depende de $^"
 	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(SRC)/command.c -o$@ -I$(INC)
+	$(CC) $(CFLAGS) -c $<
 
-$(OBJ)/game.o : $(SRC)/game.c $(INC)/game.h $(INC)/game_reader.h $(INC)/space.h $(INC)/player.h $(INC)/object.h $(INC)/die.h $(INC)/command.h $(INC)/link.h $(INC)/types.h
+ game.o : game.c game.h
 	@echo "#---------------------------"
 	@echo "# Generando $@"
 	@echo "# Depende de $^"
 	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(SRC)/game.c -o$@ -I$(INC)
+	$(CC) $(CFLAGS) -c $<
 
-$(OBJ)/game_reader.o : $(SRC)/game_reader.c $(INC)/game_reader.h $(INC)/game.h $(INC)/space.h $(INC)/player.h $(INC)/object.h $(INC)/link.h
+ game_reader.o : game_reader.c game_reader.h
 	@echo "#---------------------------"
 	@echo "# Generando $@"
 	@echo "# Depende de $^"
 	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(SRC)/game_reader.c -o$@ -I$(INC)
+	$(CC) $(CFLAGS) -c $<
 
-$(OBJ)/game_loop.o : $(SRC)/game_loop.c $(INC)/graphic_engine.h $(INC)/command.h
+ graphic_engine.o : graphic_engine.c graphic_engine.h
 	@echo "#---------------------------"
 	@echo "# Generando $@"
 	@echo "# Depende de $^"
 	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(SRC)/game_loop.c -o$@ -I$(INC)
+	$(CC) $(CFLAGS) -c $<
 
-$(OBJ)/graphic_engine.o : $(SRC)/graphic_engine.c $(INC)/graphic_engine.h $(INC)/game.h $(INC)/space.h $(INC)/screen.h
+ screen.o : screen.c screen.h
 	@echo "#---------------------------"
 	@echo "# Generando $@"
 	@echo "# Depende de $^"
 	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(SRC)/graphic_engine.c -o$@ -I$(INC)
+	$(CC) $(CFLAGS) -c $<
 
-$(OBJ)/screen.o : $(SRC)/screen.c $(INC)/screen.h
+ space.o : space.c space.h
 	@echo "#---------------------------"
 	@echo "# Generando $@"
 	@echo "# Depende de $^"
 	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(SRC)/screen.c -o$@ -I$(INC)
+	$(CC) $(CFLAGS) -c $<
 
-$(OBJ)/space.o : $(SRC)/space.c $(INC)/space.h $(INC)/types.h $(INC)/set.h
+ object.o : object.c object.h
 	@echo "#---------------------------"
 	@echo "# Generando $@"
 	@echo "# Depende de $^"
 	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(SRC)/space.c -o$@ -I$(INC)
+	$(CC) $(CFLAGS) -c $<
 
-$(OBJ)/object.o : $(SRC)/object.c $(INC)/object.h $(INC)/types.h
+ player.o : player.c player.h
 	@echo "#---------------------------"
 	@echo "# Generando $@"
 	@echo "# Depende de $^"
 	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(SRC)/object.c -o$@ -I$(INC)
+	$(CC) $(CFLAGS) -c $<
 
-$(OBJ)/player.o : $(SRC)/player.c $(INC)/player.h $(INC)/types.h $(INC)/inventory.h
+ set.o : set.c set.h
 	@echo "#---------------------------"
 	@echo "# Generando $@"
 	@echo "# Depende de $^"
 	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(SRC)/player.c -o$@ -I$(INC)
+	$(CC) $(CFLAGS) -c $<
 
-$(OBJ)/set.o : $(SRC)/set.c $(INC)/set.h $(INC)/types.h
+ die.o : die.c die.h
 	@echo "#---------------------------"
 	@echo "# Generando $@"
 	@echo "# Depende de $^"
 	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(SRC)/set.c -o$@ -I$(INC)
+	$(CC) $(CFLAGS) -c $<
 
-$(OBJ)/die.o : $(SRC)/die.c $(INC)/die.h $(INC)/types.h
+inventory.o : inventory.c inventory.h
 	@echo "#---------------------------"
 	@echo "# Generando $@"
 	@echo "# Depende de $^"
 	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(SRC)/die.c -o$@ -I$(INC)
+	$(CC) $(CFLAGS) -c $<
 
-$(OBJ)/inventory.o : $(SRC)/inventory.c $(INC)/inventory.h $(INC)/set.h $(INC)/types.h
+link.o : link.c link.h
 	@echo "#---------------------------"
 	@echo "# Generando $@"
 	@echo "# Depende de $^"
 	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(SRC)/inventory.c -o$@ -I$(INC)
+	$(CC) $(CFLAGS) -c $<
 
-$(OBJ)/link.o : $(SRC)/link.c $(INC)/link.h $(INC)/space.h
-	@echo "#---------------------------"
-	@echo "# Generando $@"
-	@echo "# Depende de $^"
-	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(SRC)/link.c -o$@ -I$(INC)
 
-$(OBJ)/inv_test.o: $(TEST)/inv_test.c $(INC)/inv_test.h $(INC)/inventory.h $(INC)/test.h
-	@echo "#---------------------------"
-	@echo "# Generando $@"
-	@echo "# Depende de $^"
-	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(TEST)/inv_test.c -o$@ -I$(INC)
-
-$(OBJ)/link_test.o: $(TEST)/link_test.c $(INC)/link_test.h $(INC)/link.h $(INC)/test.h
-	@echo "#---------------------------"
-	@echo "# Generando $@"
-	@echo "# Depende de $^"
-	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(TEST)/link_test.c -o$@ -I$(INC)
-
-$(OBJ)/space_test.o: $(TEST)/space_test.c $(INC)/space.h $(INC)/space_test.h $(INC)/test.h
-	@echo "#---------------------------"
-	@echo "# Generando $@"
-	@echo "# Depende de $^"
-	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(TEST)/space_test.c -o$@ -I$(INC)
-
-$(OBJ)/die_test.o: $(TEST)/die_test.c $(INC)/die.h $(INC)/types.h
-	@echo "#---------------------------"
-	@echo "# Generando $@"
-	@echo "# Depende de $^"
-	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(TEST)/die_test.c -o$@ -I$(INC)
-
-$(OBJ)/set_test.o: $(TEST)/set_test.c $(INC)/set.h $(INC)/types.h
-	@echo "#---------------------------"
-	@echo "# Generando $@"
-	@echo "# Depende de $^"
-	@echo "# Ha cambiado $<"
-	$(CC) $(CFLAGS) $(TEST)/set_test.c -o$@ -I$(INC)
-#tar:
-#	tar -zcvf I2_Grupo2161_JavierMartin_GonzaloMartinez.tar.gz *.h *.c *.dat *.log *.txt makefile README.txt
-
-.PHONY: clean saveclean tar jail_game_test inv_test link_test space_test die_test set_test doxy
 
 tar:
-	tar -zcvf I2_Grupo2161_JavierMartin_GonzaloMartinez.tar.gz $(OBJ) $(TEST)/*.c $(INC)/*.h $(SRC)/*.c *.dat makefile
+	tar -zcvf I2_Grupo2161_JavierMartin_GonzaloMartinez.tar.gz *.h *.c *.dat *.log *.txt makefile README.txt
 
-clean:
-	rm -f $(OBJ)/*.o jail_game TestDie TestSet TestInv TestLink TestSpace Doxyfile *.tar.gz *.log *.bak *~
+game_loop_test:
+	@echo Ejecutando game_loop
+	@ ./game_loop new_data.dat -l comandos.log
 
-saveclean:
-	rm -f *.sv *.save
+set_test_:
+	@echo Ejecutando set_test
+	@ ./set_test
 
-jail_game_test:
-	./jail_game new_data.dat -l comandos.log
+die_test_:
+	@echo Ejecutando set_die
+	@ ./die_test
+
+space_test_:
+	@echo Ejecutando space_test
+	@ ./space_test
+
+link_test_:
+	@echo Ejecutando link_test
+	@ ./link_test
+
+inv_test_:
+	@echo Ejecutando inv_test
+	@ ./inv_test
+
 
 doxy:
 	doxygen -g
